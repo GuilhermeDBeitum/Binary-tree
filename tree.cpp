@@ -3,169 +3,169 @@
 
 typedef struct no
 {
-    int conteudo;
-    struct no *esquerda, *direita;
+    int content;
+    struct no *left, *right;
 } No;
 
 typedef struct
 {
-    No *raiz;
-    int tam;
+    No *source;
+    int length;
 } ArvB;
 
-void inserirDireita(No *no, int valor);
+void insertRight(No *no, int value);
 
-void inserirEsquerda(No *no, int valor)
+void insertRight(No *no, int value)
 {
-    if (no->esquerda == NULL)
+    if (no->left == NULL)
     {
-        No *novo = (No *)malloc(sizeof(No));
-        novo->conteudo = valor;
-        novo->esquerda = NULL;
-        novo->direita = NULL;
-        no->esquerda = novo;
+        No *_new = (No *)malloc(sizeof(No));
+        _new->content = value;
+        _new->left = NULL;
+        _new->right = NULL;
+        no->left = _new;
     }
     else
     {
-        if (valor < no->esquerda->conteudo)
-            inserirEsquerda(no->esquerda, valor);
-        if (valor > no->esquerda->conteudo)
-            inserirDireita(no->esquerda, valor);
+        if (value < no->left->content)
+            insertLeft(no->left, value);
+        if (value > no->left->content)
+            insertRight(no->left, value);
     }
 }
 
-void inserirDireita(No *no, int valor)
+void insertRight(No *no, int value)
 {
-    if (no->direita == NULL)
+    if (no->right == NULL)
     {
-        No *novo = (No *)malloc(sizeof(No));
-        novo->conteudo = valor;
-        novo->esquerda = NULL;
-        novo->direita = NULL;
-        no->direita = novo;
+        No *_new = (No *)malloc(sizeof(No));
+        _new->content = value;
+        _new->left = NULL;
+        _new->right = NULL;
+        no->right = _new;
     }
     else
     {
-        if (valor > no->direita->conteudo)
-            inserirDireita(no->direita, valor);
-        if (valor < no->direita->conteudo)
-            inserirEsquerda(no->direita, valor);
+        if (value > no->right->content)
+            insertRight(no->right, value);
+        if (value < no->right->content)
+            insertLeft(no->right, value);
     }
 }
 
-void inserir(ArvB *arv, int valor)
+void inserir(ArvB *arv, int value)
 {
-    if (arv->raiz == NULL)
+    if (arv->source == NULL)
     {
-        No *novo = (No *)malloc(sizeof(No));
-        novo->conteudo = valor;
-        novo->esquerda = NULL;
-        novo->direita = NULL;
-        arv->raiz = novo;
+        No *_new = (No *)malloc(sizeof(No));
+        _new->content = value;
+        _new->left = NULL;
+        _new->right = NULL;
+        arv->source = _new;
     }
     else
     {
-        if (valor < arv->raiz->conteudo)
-            inserirEsquerda(arv->raiz, valor);
-        if (valor > arv->raiz->conteudo)
-            inserirDireita(arv->raiz, valor);
+        if (value < arv->source->content)
+            insertLeft(arv->source, value);
+        if (value > arv->source->content)
+            insertRight(arv->source, value);
     }
 }
 
-No *inserirNovaVersao(No *raiz, int valor)
+No *inserirNovaVersao(No *source, int value)
 {
-    if (raiz == NULL)
+    if (source == NULL)
     {
-        No *novo = (No *)malloc(sizeof(No));
-        novo->conteudo = valor;
-        novo->esquerda = NULL;
-        novo->direita = NULL;
-        return novo;
+        No *_new = (No *)malloc(sizeof(No));
+        _new->content = value;
+        _new->left = NULL;
+        _new->right = NULL;
+        return _new;
     }
     else
     {
-        if (valor < raiz->conteudo)
-            raiz->esquerda = inserirNovaVersao(raiz->esquerda, valor);
-        if (valor > raiz->conteudo)
-            raiz->direita = inserirNovaVersao(raiz->direita, valor);
-        return raiz;
+        if (value < source->content)
+            source->left = inserirNovaVersao(source->left, value);
+        if (value > source->content)
+            source->right = inserirNovaVersao(source->right, value);
+        return source;
     }
 }
 
-void imprimir(No *raiz)
+void printView(No *source)
 {
-    if (raiz != NULL)
+    if (source != NULL)
     {
-        imprimir(raiz->esquerda);
-        printf("%d ", raiz->conteudo);
-        imprimir(raiz->direita);
+        printView(source->left);
+        printf("%d ", source->content);
+        printView(source->right);
     }
 }
 
-No *remover(No *raiz, int chave)
+No *remover(No *source, int key)
 {
-    if (raiz == NULL)
+    if (source == NULL)
     {
         printf("Valor nao encontrado!\n");
         return NULL;
     }
     else
     {
-        if (raiz->conteudo == chave)
+        if (source->content == key)
         {
             // remove nós folhas (nós sem filhos)
-            if (raiz->esquerda == NULL && raiz->direita == NULL)
+            if (source->left == NULL && source->right == NULL)
             {
-                free(raiz);
+                free(source);
                 return NULL;
             }
             else
             {
                 // remover nós que possuem apenas 1 filho
-                if (raiz->esquerda == NULL || raiz->direita == NULL)
+                if (source->left == NULL || source->right == NULL)
                 {
                     No *aux;
-                    if (raiz->esquerda != NULL)
-                        aux = raiz->esquerda;
+                    if (source->left != NULL)
+                        aux = source->left;
                     else
-                        aux = raiz->direita;
-                    free(raiz);
+                        aux = source->right;
+                    free(source);
                     return aux;
                 }
                 else
                 {
-                    No *aux = raiz->esquerda;
-                    while (aux->direita != NULL)
-                        aux = aux->direita;
-                    raiz->conteudo = aux->conteudo;
-                    aux->conteudo = chave;
-                    raiz->esquerda = remover(raiz->esquerda, chave);
-                    return raiz;
+                    No *aux = source->left;
+                    while (aux->right != NULL)
+                        aux = aux->right;
+                    source->content = aux->content;
+                    aux->content = key;
+                    source->left = remover(source->left, key);
+                    return source;
                 }
             }
         }
         else
         {
-            if (chave < raiz->conteudo)
-                raiz->esquerda = remover(raiz->esquerda, chave);
+            if (key < source->content)
+                source->left = remover(source->left, key);
             else
-                raiz->direita = remover(raiz->direita, chave);
-            return raiz;
+                source->right = remover(source->right, key);
+            return source;
         }
     }
 }
 
 int main()
 {
-    int op, valor;
+    int op, value;
     ArvB arv;
-    arv.raiz = NULL;
+    arv.source = NULL;
 
-    No *raiz = NULL;
+    No *source = NULL;
 
     do
     {
-        printf("\n1 - inserir\n2 - imprimir\n3 - Remover\n");
+        printf("\n1 - inserir\n2 - printView\n3 - Remover\n");
         scanf("%d", &op);
 
         switch (op)
@@ -173,22 +173,22 @@ int main()
 
         case 1:
             printf("Digite um valor: ");
-            scanf("%d", &valor);
-            raiz = inserirNovaVersao(raiz, valor);  
+            scanf("%d", &value);
+            source = inserirNovaVersao(source, value);  
             break;
         case 2:
             printf("\nImpressao da arvore binaria:\n");
-            imprimir(raiz);
+            printView(source);
             printf("\n");
             break;
         case 3:
-            printf("Digite um valor a ser removido: ");
-            scanf("%d", &valor);
-            raiz = remover(raiz, valor);
+            printf("Digite um value a ser removido: ");
+            scanf("%d", &value);
+            source = remover(source, value);
             break;
 
         default:
-            printf("\nOpcao invalida...\n");
+            printf("\nOpção invalida...\n");
         }
     } while (op != 0);
 }
